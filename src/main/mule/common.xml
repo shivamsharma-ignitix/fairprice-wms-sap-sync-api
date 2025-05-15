@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="blob-token-subflow" doc:id="d3e0e56f-15ac-4ddb-90bc-d58b31fdcc3d" >
+		<os:retrieve doc:name="Retrieve blobToken" doc:id="7d2138e7-8efd-48e8-92c5-8cdd11b413c5" key="blobToken" target="blobToken" objectStore="Object_store">
+			<os:default-value ><![CDATA[#[""]]]></os:default-value>
+		</os:retrieve>
+		<choice doc:name="Check isEmpty(vars.blobToken)?" doc:id="0f0d0c4c-5c79-428b-a5cc-31d4fc81e7c1" >
+			<when expression="#[isEmpty(vars.blobToken)]">
+				<ee:transform doc:name="Transform Message" doc:id="43562a1d-7856-4582-98cd-6a65fa7912e7">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	grant_type: "client_credentials",
+	client_id: "3d591867-1ae2-43ad-83b5-3b4689619013",
+	client_secret: "zuK8Q~7LOegLdlhT00JQh0ekmAEc__EG32yArcrZ",
+	scope: "https://blueyonderapac.onmicrosoft.com/50d4a6de-1a61-453a-85cd-c6f7728de8e1/.default"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<http:request method="POST" doc:name="Request Blob Access Token" doc:id="016b31fc-ae83-4334-b3df-716aa8398694" config-ref="HTTP_Request_configuration_Blob_Token" path="/oauth2/v2.0/token">
+					<http:query-params ><![CDATA[#[output application/java
+---
+{
+	realmId : "32174d50-7bd0-4559-b64d-628cbc113061"
+}]]]></http:query-params>
+				</http:request>
+				<set-variable value='#[payload."access_token"]' doc:name="blobToken" doc:id="f5478655-adb3-4ecf-be01-49df79049559" variableName="blobToken"/>
+				<os:store doc:name="Store Blob Access Token" doc:id="66584ef2-d8ae-4290-b74c-e2dc9f43660b" key="blobToken" objectStore="Object_store">
+					<os:value ><![CDATA[#[payload."access_token"]]]></os:value>
+				</os:store>
+			</when>
+		</choice>
+	</sub-flow>
+</mule>

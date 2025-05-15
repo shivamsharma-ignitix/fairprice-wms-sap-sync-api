@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6a1f5c15-a5e6-4c93-bdd8-5bca9f7b4da2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration_Blob_Token" doc:name="HTTP Request configuration" doc:id="8ae4beeb-e5ef-4a3d-9b85-8f618009587a" basePath="/B2C_1A_ClientCredential" >
+		<http:request-connection protocol="HTTPS" host="blueyonderapac.b2clogin.com/blueyonderapac.onmicrosoft.com" port="443" />
+	</http:request-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="024086f3-60ca-4748-bbbe-4f40e343d8da" persistent="false" entryTtl="3500" />
+</mule>
